@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Jejak Sampah Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --bg-gradient: linear-gradient(135deg, #d4f5e9 0%, #a3e4d7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 135, 85, 0.15);
+            --text-dark: #1a5e3a;
+            --text-light: #2d6a4f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 1rem 2rem;
+            border-bottom: 1px solid rgba(46, 204, 113, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .logo-area i {
+            font-size: 2rem;
+            color: var(--dark-green);
+        }
+
+        .logo-area h2 {
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: var(--text-dark);
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .nav-item i {
+            width: 24px;
+            font-size: 1.2rem;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--dark-green);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: white;
+            color: var(--dark-green);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+            font-weight: 600;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            padding: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 12px 40px 0 rgba(31, 135, 85, 0.2);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-title i {
+            color: var(--primary-green);
+            font-size: 1.8rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--primary-green);
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-green);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .chart-container canvas {
+            max-height: 300px;
+            width: 100% !important;
+        }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+        }
+
+        .section-title i {
+            color: var(--primary-green);
+        }
+
+        /* Result Items */
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(46, 204, 113, 0.15);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: var(--text-light);
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .badge-large {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* History Table */
+        .history-table-container {
+            padding: 1.5rem;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 0.75rem 0;
+            color: var(--text-dark);
+            font-weight: 600;
+            border-bottom: 2px solid rgba(46, 204, 113, 0.2);
+        }
+
+        .history-table td {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--text-light);
+        }
+
+        .history-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .trend-down { color: #27ae60; }
+        .trend-up { color: #e74c3c; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem;
+            }
+
+            .nav-menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-item {
+                padding: 0.6rem 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebarContainer"></div>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title"><i class="fas fa-chart-pie"></i> Dashboard</h1>
+                <p class="page-subtitle">Pantau jejak digital dan statistik penggunaanmu</p>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card glass-card">
+                    <i class="fas fa-cloud"></i>
+                    <h3>Rata-rata CO₂</h3>
+                    <div class="stat-value" id="avgCO2">0.00</div>
+                    <div class="stat-label">kg / bulan</div>
+                </div>
+                <div class="stat-card glass-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Total Energi</h3>
+                    <div class="stat-value" id="totalEnergy">0.00</div>
+                    <div class="stat-label">kWh / bulan</div>
+                </div>
+                <div class="stat-card glass-card">
+                    <i class="fas fa-star"></i>
+                    <h3>Skor Digital</h3>
+                    <div class="stat-value" id="currentScore">0</div>
+                    <div class="stat-label">dari 100</div>
+                </div>
+                <div class="stat-card glass-card">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Total Kalkulasi</h3>
+                    <div class="stat-value" id="totalCalc">0</div>
+                    <div class="stat-label">kali</div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="glass-card chart-container">
+                <h3><i class="fas fa-chart-line"></i> Riwayat Emisi CO₂ (kg/bulan)</h3>
+                <canvas id="co2Chart"></canvas>
+            </div>
+
+            <!-- Hasil Terbaru & Ringkasan -->
+            <div class="grid-2">
+                <!-- Hasil Kalkulasi Terbaru -->
+                <div class="glass-card">
+                    <h3 class="section-title"><i class="fas fa-clock"></i> Hasil Terbaru</h3>
+                    <div id="latestResult">
+                        <p style="color: var(--text-light); text-align: center; padding: 2rem;">Belum ada data kalkulasi</p>
+                    </div>
+                </div>
+
+                <!-- Ringkasan Aktivitas -->
+                <div class="glass-card">
+                    <h3 class="section-title"><i class="fas fa-list"></i> Ringkasan</h3>
+                    <div id="summaryContainer">
+                        <!-- Diisi oleh JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Riwayat Singkat -->
+            <div class="glass-card history-table-container">
+                <h3 class="section-title"><i class="fas fa-history"></i> Riwayat Kalkulasi Terakhir</h3>
+                <div style="overflow-x: auto;">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>CO₂ (kg)</th>
+                                <th>Energi (kWh)</th>
+                                <th>Skor</th>
+                                <th>Kategori</th>
+                                <th>Tren</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Diisi oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // AUTH GUARD & SIDEBAR
+        // ============================================
+        (function() {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = '../index.html';
+            }
+
+            window.logout = function() {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                window.location.href = '../index.html';
+            };
+
+            const sidebar = document.getElementById('sidebarContainer');
+            const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+
+            sidebar.innerHTML = `
+                <div class="logo-area">
+                    <i class="fas fa-recycle"></i>
+                    <h2>EcoDigital</h2>
+                </div>
+                <div class="nav-menu">
+                    <a href="beranda.html" class="nav-item ${currentPage === 'beranda.html' ? 'active' : ''}">
+                        <i class="fas fa-home"></i> Beranda
+                    </a>
+                    <a href="kalkulator.html" class="nav-item ${currentPage === 'kalkulator.html' ? 'active' : ''}">
+                        <i class="fas fa-calculator"></i> Kalkulator
+                    </a>
+                    <a href="dashboard.html" class="nav-item ${currentPage === 'dashboard.html' ? 'active' : ''}">
+                        <i class="fas fa-chart-pie"></i> Dashboard
+                    </a>
+                    <a href="tips.html" class="nav-item ${currentPage === 'tips.html' ? 'active' : ''}">
+                        <i class="fas fa-lightbulb"></i> Tips
+                    </a>
+                    <a href="riwayat.html" class="nav-item ${currentPage === 'riwayat.html' ? 'active' : ''}">
+                        <i class="fas fa-history"></i> Riwayat
+                    </a>
+                </div>
+                
+            `;
+        })();
+
+        // ============================================
+        // DASHBOARD LOGIC
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+            renderChart();
+            renderSummary();
+            renderHistoryTable();
+        });
+
+        function loadDashboardData() {
+            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+            const lastCalc = JSON.parse(localStorage.getItem('lastCalc') || '{}');
+            
+            document.getElementById('totalCalc').textContent = history.length;
+            
+            if (history.length > 0) {
+                const avgCO2 = history.reduce((sum, h) => sum + h.co2, 0) / history.length;
+                document.getElementById('avgCO2').textContent = avgCO2.toFixed(2);
+                
+                const totalEnergy = history.reduce((sum, h) => sum + h.energy, 0);
+                document.getElementById('totalEnergy').textContent = totalEnergy.toFixed(2);
+                
+                const lastItem = history[history.length - 1];
+                document.getElementById('currentScore').textContent = lastItem.score || 0;
+                
+                renderLatestResult(lastItem);
+            } else {
+                document.getElementById('avgCO2').textContent = '0.00';
+                document.getElementById('totalEnergy').textContent = '0.00';
+                document.getElementById('currentScore').textContent = '0';
+            }
+        }
+
+        function renderLatestResult(data) {
+            const container = document.getElementById('latestResult');
+            
+            if (!data || Object.keys(data).length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 2rem;">Belum ada data kalkulasi</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="result-item">
+                    <span class="result-label"><i class="fas fa-calendar"></i> Tanggal</span>
+                    <span class="result-value">${data.date || '-'}</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label"><i class="fas fa-cloud"></i> CO₂</span>
+                    <span class="result-value">${data.co2.toFixed(2)} kg</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label"><i class="fas fa-bolt"></i> Energi</span>
+                    <span class="result-value">${data.energy.toFixed(2)} kWh</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label"><i class="fas fa-star"></i> Skor</span>
+                    <span class="result-value">${data.score}/100</span>
+                </div>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <span class="badge-large">${data.category || 'Normal'}</span>
+                </div>
+            `;
+        }
+
+        function renderChart() {
+            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+            const ctx = document.getElementById('co2Chart').getContext('2d');
+            
+            if (history.length === 0) {
+                // Tampilkan grafik kosong dengan pesan
+                new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: [], datasets: [] },
+                    options: {
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Belum ada data kalkulasi',
+                                color: '#2d6a4f'
+                            }
+                        }
+                    }
+                });
+                return;
+            }
+            
+            const recentHistory = history.slice(-10);
+            const labels = recentHistory.map((h, i) => {
+                const date = new Date(h.date);
+                return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            });
+            const data = recentHistory.map(h => h.co2);
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Emisi CO₂ (kg)',
+                        data: data,
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#27ae60',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#1a5e3a',
+                            bodyColor: '#2d6a4f',
+                            borderColor: '#2ecc71',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(46, 204, 113, 0.1)' },
+                            ticks: { color: '#2d6a4f' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#2d6a4f' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderSummary() {
+            const container = document.getElementById('summaryContainer');
+            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+            
+            if (history.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 2rem;">Belum ada data</p>';
+                return;
+            }
+            
+            // Hitung statistik
+            const co2Values = history.map(h => h.co2);
+            const minCO2 = Math.min(...co2Values);
+            const maxCO2 = Math.max(...co2Values);
+            
+            // Hitung tren (membaik atau memburuk)
+            let trend = 'stabil';
+            let trendIcon = 'fa-minus';
+            let trendColor = '#f39c12';
+            
+            if (history.length >= 2) {
+                const first = history[0].co2;
+                const last = history[history.length - 1].co2;
+                const change = ((last - first) / first) * 100;
+                
+                if (change < -5) {
+                    trend = 'membaik';
+                    trendIcon = 'fa-arrow-down';
+                    trendColor = '#27ae60';
+                } else if (change > 5) {
+                    trend = 'meningkat';
+                    trendIcon = 'fa-arrow-up';
+                    trendColor = '#e74c3c';
+                }
+            }
+            
+            // Total CO2 yang dihasilkan
+            const totalCO2 = co2Values.reduce((a, b) => a + b, 0);
+            
+            // Estimasi pohon yang dibutuhkan (1 pohon = 21 kg CO2/tahun)
+            const treesNeeded = (totalCO2 / 21).toFixed(1);
+            
+            container.innerHTML = `
+                <div class="result-item">
+                    <span class="result-label"><i class="fas fa-chart-bar"></i> CO₂ Tertinggi</span>
+                    <span class="result-value">${maxCO2.toFixed(2)} kg</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label"><i class="fas fa-chart-line"></i> CO₂ Terendah</span>
+                    <span class="result-value">${minCO2.toFixed(2)} kg</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label"><i class="fas fa-calculator"></i> Total CO₂</span>
+                    <span class="result-value">${totalCO2.toFixed(2)} kg</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label"><i class="fas fa-tree"></i> Pohon Dibutuhkan</span>
+                    <span class="result-value">${treesNeeded} pohon/tahun</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label"><i class="fas fa-trend-${trend === 'membaik' ? 'down' : 'up'}"></i> Tren</span>
+                    <span class="result-value" style="color: ${trendColor};">
+                        <i class="fas ${trendIcon}"></i> ${trend}
+                    </span>
+                </div>
+            `;
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+            
+            if (history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-light);">Belum ada data kalkulasi</td></tr>`;
+                return;
+            }
+            
+            // Tampilkan 5 data terakhir (terbalik: terbaru di atas)
+            const recentHistory = [...history].reverse().slice(0, 5);
+            
+            let html = '';
+            recentHistory.forEach((item, index) => {
+                // Hitung tren dibanding data sebelumnya
+                let trendHtml = '-';
+                if (index < recentHistory.length - 1) {
+                    const prev = recentHistory[index + 1].co2;
+                    const curr = item.co2;
+                    const change = ((curr - prev) / prev) * 100;
+                    
+                    if (change < -5) {
+                        trendHtml = `<span class="trend-down"><i class="fas fa-arrow-down"></i> ${Math.abs(change).toFixed(1)}%</span>`;
+                    } else if (change > 5) {
+                        trendHtml = `<span class="trend-up"><i class="fas fa-arrow-up"></i> ${change.toFixed(1)}%</span>`;
+                    } else {
+                        trendHtml = `<span style="color: #f39c12;"><i class="fas fa-minus"></i> 0%</span>`;
+                    }
+                }
+                
+                // Format tanggal
+                let dateStr = item.date;
+                if (item.date && item.date.includes(',')) {
+                    const parts = item.date.split(',')[0];
+                    dateStr = parts;
+                }
+                
+                html += `
+                    <tr>
+                        <td>${dateStr || '-'}</td>
+                        <td>${item.co2.toFixed(2)} kg</td>
+                        <td>${item.energy.toFixed(2)} kWh</td>
+                        <td><strong>${item.score}</strong></td>
+                        <td><span style="background: rgba(46, 204, 113, 0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">${item.category || 'Normal'}</span></td>
+                        <td>${trendHtml}</td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
