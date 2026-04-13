@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Jejak Sampah Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --bg-gradient: linear-gradient(135deg, #d4f5e9 0%, #a3e4d7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 135, 85, 0.15);
+            --text-dark: #1a5e3a;
+            --text-light: #2d6a4f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            padding: 1.5rem;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header i {
+            font-size: 3rem;
+            color: var(--dark-green);
+            background: white;
+            padding: 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .login-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .login-header p {
+            color: var(--text-light);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-green);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.5);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+            color: var(--text-dark);
+        }
+
+        .input-group input::placeholder {
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+
+        .input-group input:focus {
+            background: white;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            border-radius: 40px;
+            background: var(--dark-green);
+            color: white;
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.2s;
+        }
+
+        .btn-login:hover {
+            background: #1e8449;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            min-height: 24px;
+        }
+
+        .bg-decoration .circle-1 {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 50%;
+            top: -50px;
+            right: -50px;
+            z-index: 1;
+        }
+
+        .bg-decoration .circle-2 {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(46, 204, 113, 0.08);
+            border-radius: 50%;
+            bottom: -30px;
+            left: -30px;
+            z-index: 1;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 1.5rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .login-header i {
+                font-size: 2.5rem;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card glass-card">
+            <div class="login-header">
+                <i class="fas fa-leaf"></i>
+                <h1>Jejak Sampah Digital</h1>
+                <p>Masuk untuk melacak dampak digitalmu</p>
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-login">
+                    <span>Masuk</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div id="loginError" class="error-message"></div>
+            </form>
+        </div>
+        <div class="bg-decoration">
+            <div class="circle-1"></div>
+            <div class="circle-2"></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Cek apakah sudah login
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                window.location.href = 'pages/beranda.html';
+            }
+
+            const form = document.getElementById('loginForm');
+            const errorDiv = document.getElementById('loginError');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                if (username === 'admin' && password === 'admin') {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('username', username);
+                    window.location.href = 'pages/beranda.html';
+                } else {
+                    errorDiv.textContent = 'Username atau password salah!';
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
