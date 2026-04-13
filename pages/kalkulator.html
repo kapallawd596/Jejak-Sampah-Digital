@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator - Jejak Sampah Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --bg-gradient: linear-gradient(135deg, #d4f5e9 0%, #a3e4d7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 135, 85, 0.15);
+            --text-dark: #1a5e3a;
+            --text-light: #2d6a4f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 1rem 2rem;
+            border-bottom: 1px solid rgba(46, 204, 113, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .logo-area i {
+            font-size: 2rem;
+            color: var(--dark-green);
+        }
+
+        .logo-area h2 {
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: var(--text-dark);
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .nav-item i {
+            width: 24px;
+            font-size: 1.2rem;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--dark-green);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: white;
+            color: var(--dark-green);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+            font-weight: 600;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            padding: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-title i {
+            color: var(--primary-green);
+            font-size: 1.8rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .calculator-container {
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group-calc {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group-calc label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .input-group-calc label i {
+            color: var(--primary-green);
+            width: 20px;
+        }
+
+        .input-group-calc input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(46, 204, 113, 0.2);
+            border-radius: 10px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .input-group-calc input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+            border: 2px solid white;
+        }
+
+        .input-group-calc input[type="number"] {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-group-calc input[type="number"]:focus {
+            background: white;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+        }
+
+        .input-group-calc span {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .result-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(46, 204, 113, 0.15);
+            margin-bottom: 1.5rem;
+        }
+
+        .co2-box, .energy-box, .score-container {
+            text-align: center;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .co2-box h3, .energy-box h3, .score-container h3 {
+            color: var(--text-dark);
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .big-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark-green);
+            line-height: 1.2;
+        }
+
+        .co2-box span, .energy-box span {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .score-container .progress-bar-container {
+            height: 12px;
+            background: rgba(46, 204, 113, 0.15);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .score-container .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--dark-green));
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+
+        #scoreValue {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 1.25rem;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .save-section {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .save-notification {
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--dark-green);
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .save-notification.show {
+            opacity: 1;
+        }
+
+        .simulation-real {
+            padding: 1.5rem 2rem;
+        }
+
+        .simulation-real h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .simulation-real p {
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+        }
+
+        .simulation-real strong {
+            color: var(--dark-green);
+            font-size: 1.2rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem;
+            }
+
+            .nav-menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-item {
+                padding: 0.6rem 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+
+            .result-section {
+                grid-template-columns: 1fr;
+            }
+
+            .calculator-container {
+                padding: 1.5rem;
+            }
+
+            .big-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <div class="sidebar" id="sidebarContainer"></div>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title"><i class="fas fa-calculator"></i> Kalkulator Jejak Digital</h1>
+                <p class="page-subtitle">Hitung estimasi emisi karbon dari aktivitas digitalmu</p>
+            </div>
+
+            <div class="calculator-container glass-card">
+                <div class="input-section">
+                    <div class="input-group-calc">
+                        <label><i class="fas fa-clock"></i> Durasi Internet per Hari</label>
+                        <input type="range" id="internetHours" min="0" max="16" step="0.5" value="6">
+                        <span id="hoursValue">6 jam</span>
+                    </div>
+                    
+                    <div class="input-group-calc">
+                        <label><i class="fas fa-envelope"></i> Email Dikirim per Hari</label>
+                        <input type="number" id="emailCount" min="0" max="100" value="20">
+                    </div>
+                    
+                    <div class="input-group-calc">
+                        <label><i class="fas fa-play-circle"></i> Streaming per Hari</label>
+                        <input type="range" id="streamingHours" min="0" max="8" step="0.5" value="2">
+                        <span id="streamingValue">2 jam</span>
+                    </div>
+                    
+                    <div class="input-group-calc">
+                        <label><i class="fas fa-download"></i> Upload/Download per Hari</label>
+                        <input type="number" id="dataUsage" min="0" max="50" step="0.5" value="3">
+                        <span style="margin-left: 0.5rem;">GB</span>
+                    </div>
+                </div>
+
+                <div class="result-section" id="calcResult">
+                    <div class="co2-box">
+                        <h3><i class="fas fa-cloud"></i> Estimasi CO₂</h3>
+                        <div class="big-number" id="co2Value">0.00</div>
+                        <span>kg CO₂ / bulan</span>
+                    </div>
+                    
+                    <div class="energy-box">
+                        <h3><i class="fas fa-bolt"></i> Energi</h3>
+                        <div class="big-number" id="energyValue">0.00</div>
+                        <span>kWh / bulan</span>
+                    </div>
+                    
+                    <div class="score-container">
+                        <h3><i class="fas fa-star"></i> Skor Digital</h3>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="scoreProgress" style="width: 60%"></div>
+                        </div>
+                        <div id="scoreValue">60/100</div>
+                        <div class="badge" id="ecoBadge">Normal</div>
+                    </div>
+                </div>
+
+                <div class="save-section">
+                    <button class="btn-primary" id="saveBtn" onclick="saveCalculation()">
+                        <i class="fas fa-save"></i> Simpan Kalkulasi
+                    </button>
+                </div>
+                <div class="save-notification" id="saveNotification">
+                    <i class="fas fa-check-circle"></i> Data berhasil disimpan!
+                </div>
+            </div>
+            
+            <div class="glass-card simulation-real">
+                <h3><i class="fas fa-tree"></i> Simulasi Dampak Nyata</h3>
+                <p id="treeEquivalent">Karbonmu setara dengan <strong>-</strong> pohon per tahun.</p>
+                <p id="carEquivalent">Setara dengan mobil menempuh <strong>-</strong> km.</p>
+                <p id="lampEquivalent" style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px dashed rgba(46, 204, 113, 0.3);">
+                    <i class="fas fa-lightbulb"></i> Setara menyalakan lampu LED 10W selama <strong>-</strong> jam.
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // AUTH GUARD & SIDEBAR
+        // ============================================
+        (function() {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = '../index.html';
+            }
+
+            window.logout = function() {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                window.location.href = '../index.html';
+            };
+
+            const sidebar = document.getElementById('sidebarContainer');
+            const currentPage = window.location.pathname.split('/').pop() || 'kalkulator.html';
+
+            sidebar.innerHTML = `
+                <div class="logo-area">
+                    <i class="fas fa-recycle"></i>
+                    <h2>EcoDigital</h2>
+                </div>
+                <div class="nav-menu">
+                    <a href="beranda.html" class="nav-item ${currentPage === 'beranda.html' ? 'active' : ''}">
+                        <i class="fas fa-home"></i> Beranda
+                    </a>
+                    <a href="kalkulator.html" class="nav-item ${currentPage === 'kalkulator.html' ? 'active' : ''}">
+                        <i class="fas fa-calculator"></i> Kalkulator
+                    </a>
+                    <a href="dashboard.html" class="nav-item ${currentPage === 'dashboard.html' ? 'active' : ''}">
+                        <i class="fas fa-chart-pie"></i> Dashboard
+                    </a>
+                    <a href="tips.html" class="nav-item ${currentPage === 'tips.html' ? 'active' : ''}">
+                        <i class="fas fa-lightbulb"></i> Tips
+                    </a>
+                    <a href="riwayat.html" class="nav-item ${currentPage === 'riwayat.html' ? 'active' : ''}">
+                        <i class="fas fa-history"></i> Riwayat
+                    </a>
+                </div>
+               
+            `;
+        })();
+
+        // ============================================
+        // CALCULATOR LOGIC
+        // ============================================
+        let currentCalcData = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const internetHours = document.getElementById('internetHours');
+            const hoursSpan = document.getElementById('hoursValue');
+            const emailCount = document.getElementById('emailCount');
+            const streamingHours = document.getElementById('streamingHours');
+            const streamSpan = document.getElementById('streamingValue');
+            const dataUsage = document.getElementById('dataUsage');
+
+            function updateCalc() {
+                hoursSpan.textContent = internetHours.value + ' jam';
+                streamSpan.textContent = streamingHours.value + ' jam';
+
+                const internetCO2 = internetHours.value * 0.05;
+                const emailCO2 = emailCount.value * 0.004;
+                const streamCO2 = streamingHours.value * 0.4;
+                const dataCO2 = dataUsage.value * 0.1;
+
+                const dailyCO2 = internetCO2 + emailCO2 + streamCO2 + dataCO2;
+                const monthlyCO2 = dailyCO2 * 30;
+                const monthlyEnergy = monthlyCO2 * 1.5;
+
+                let score = Math.max(0, 100 - (monthlyCO2 * 2));
+                score = Math.min(100, Math.round(score));
+                
+                let category = '';
+                if (score >= 70) {
+                    category = '🌿 Eco Friendly';
+                } else if (score >= 40) {
+                    category = '🌱 Normal';
+                } else {
+                    category = '⚠️ Boros Digital';
+                }
+
+                document.getElementById('co2Value').textContent = monthlyCO2.toFixed(2);
+                document.getElementById('energyValue').textContent = monthlyEnergy.toFixed(2);
+                document.getElementById('scoreProgress').style.width = score + '%';
+                document.getElementById('scoreValue').textContent = `${score}/100`;
+                document.getElementById('ecoBadge').textContent = category;
+
+                const yearlyCO2 = monthlyCO2 * 12;
+                const treesNeeded = yearlyCO2 / 21;
+                document.getElementById('treeEquivalent').innerHTML = 
+                    `Karbonmu setara dengan <strong>${treesNeeded.toFixed(1)} pohon</strong> per tahun.`;
+                
+                const carKm = yearlyCO2 / 0.12;
+                document.getElementById('carEquivalent').innerHTML = 
+                    `Setara dengan mobil menempuh <strong>${Math.round(carKm)} km</strong>.`;
+                
+                const lampHours = yearlyCO2 / 0.015;
+                document.getElementById('lampEquivalent').innerHTML = 
+                    `<i class="fas fa-lightbulb"></i> Setara menyalakan lampu LED 10W selama <strong>${Math.round(lampHours).toLocaleString('id-ID')} jam</strong>.`;
+
+                // Simpan data sementara (belum disimpan ke history)
+                currentCalcData = {
+                    date: new Date().toLocaleString('id-ID'),
+                    co2: monthlyCO2,
+                    energy: monthlyEnergy,
+                    score: score,
+                    category: category,
+                    details: {
+                        internetHours: internetHours.value,
+                        emailCount: emailCount.value,
+                        streamingHours: streamingHours.value,
+                        dataUsage: dataUsage.value
+                    }
+                };
+            }
+
+            [internetHours, emailCount, streamingHours, dataUsage].forEach(el => {
+                el.addEventListener('input', updateCalc);
+            });
+
+            updateCalc();
+        });
+
+        // Fungsi simpan kalkulasi (dipanggil saat klik tombol)
+        window.saveCalculation = function() {
+            if (!currentCalcData) return;
+
+            // Simpan hasil terakhir
+            localStorage.setItem('lastCalc', JSON.stringify({
+                co2: currentCalcData.co2,
+                energy: currentCalcData.energy,
+                score: currentCalcData.score,
+                category: currentCalcData.category
+            }));
+
+            // Tambah ke history kalkulasi
+            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+            history.push(currentCalcData);
+            if (history.length > 20) history.shift();
+            localStorage.setItem('calcHistory', JSON.stringify(history));
+
+            // Tampilkan notifikasi sukses
+            const notification = document.getElementById('saveNotification');
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        };
+    </script>
+</body>
+</html>
