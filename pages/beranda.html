@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda - Jejak Sampah Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/beranda.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar (loaded via JS or static) -->
+        <div class="sidebar" id="sidebarContainer"></div>
+        
+        <main class="main-content">
+            <h1 class="page-title">🌱 Jejak Sampah Digital</h1>
+            
+            <div class="hero-section glass-card">
+                <div class="hero-text">
+                    <h2>Apa itu Sampah Digital?</h2>
+                    <p>Setiap email spam, file duplikat, cache browser, dan streaming yang tidak perlu menyumbang emisi CO₂ tersembunyi. Data center dunia menyumbang 2% dari emisi global - setara dengan industri penerbangan!</p>
+                </div>
+                <div class="hero-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="glass-card stat-card">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <h3>Email Spam</h3>
+                    <p style="text-align: justify;">Triliunan email spam memonopoli kapasitas penyimpanan server dan menyumbat lalu lintas jaringan internet global. Pesan tanpa nilai ini memaksa sistem komputasi bekerja ekstra hanya untuk menyaring data yang tidak berguna, yang pada akhirnya mempercepat keausan infrastruktur digital.</p>
+                </div>
+                <div class="glass-card stat-card">
+                    <i class="fas fa-database"></i>
+                    <h3>Data Redundan</h3>
+                     <p style="text-align: justify;">File duplikat dan cache yang menumpuk merupakan penyumbang utama sampah digital. Mengingat 90% data dunia tercipta hanya dalam dua tahun terakhir, penumpukan data redundan ini menciptakan inefisiensi masif pada pusat data dan memperparah krisis limbah elektronik global..</p>
+                    <p style="text-align: justify;"></p>
+                </div>
+                <div class="glass-card stat-card">
+                    <i class="fas fa-video"></i>
+                    <h3>Streaming Boros</h3>
+                    <p style="text-align: justify;">Streaming video kualitas HD selama satu jam menghasilkan sekitar 0,4 kg CO₂. Dengan beralih ke resolusi standar, kita dapat menghemat energi hingga 80%, sekaligus mengurangi beban komputasi server dan menekan emisi karbon yang dihasilkan dari aktivitas hiburan digital kita.</p>
+                </div>
+            </div>
+
+            <div class="simulation-box glass-card" id="impactSimulation">
+                <h3><i class="fas fa-tree"></i> Dampak Nyata</h3>
+                <div class="sim-stats">
+                    <div>Penggunaan Internet Global: <strong>3.7% emisi CO₂ dunia</strong></div>
+                    <div>Setara dengan: <span id="planeEquivalent">🚀 Seluruh penerbangan komersial</span></div>
+                </div>
+                <div class="tree-calc">
+                    <p>1 pohon dewasa menyerap 21 kg CO₂/tahun. Rata-rata pengguna internet menghasilkan 414 kg CO₂/tahun → butuh <strong>20 pohon</strong> untuk menetralkannya.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <script src="../js/beranda.js"></script>
+</body>
+</html>
