@@ -715,3 +715,41 @@ input, select, textarea {
         font-size: 1.8rem;
     }
 }
+/* Sidebar Profile */
+.sidebar-profile {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: var(--glass-border);
+    border-radius: 16px;
+    margin-bottom: 1rem;
+}
+
+.profile-card i {
+    font-size: 2.5rem;
+    color: var(--primary-green);
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.profile-role {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
