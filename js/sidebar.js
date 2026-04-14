@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="fas fa-user-circle"></i>
                 <div class="profile-info">
                     <span class="profile-name">${username}</span>
-                    <span class="profile-role">Eco Warrior</span>
+                    <span class="profile-role">kelompok ilham</span>
                 </div>
             </div>
             <button onclick="logout()" class="nav-item logout-btn">
